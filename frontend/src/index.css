@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #00e5ff;
+  --color-primary-glow: rgba(0, 229, 255, 0.5);
+  --color-secondary: #7000ff;
+  --color-dark: #0a0a0c;
+  --color-darker: #050505;
+  --color-card: #111114;
+  --color-card-hover: rgba(25, 35, 55, 0.8);
+  --color-accent: #f72585;
+}
+
+body {
+  @apply bg-darker text-gray-100 antialiased min-h-screen selection:bg-primary selection:text-darker;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(123, 44, 191, 0.05), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(0, 229, 255, 0.05), transparent 25%);
+}
+
+.glass-panel {
+  @apply bg-card backdrop-blur-xl border border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.1)] rounded-2xl;
+}
+
+.glass-panel:hover {
+  @apply bg-card-hover border-white/10 shadow-[0_0_20px_var(--color-primary-glow)];
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+}
+
+.neon-border {
+  @apply relative rounded-2xl p-[1px] bg-gradient-to-r from-primary/50 to-secondary/50;
+}
+
+.neon-border > div {
+  @apply h-full w-full bg-dark rounded-2xl;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-darker);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

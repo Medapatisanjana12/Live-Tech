@@ -1,0 +1,22 @@
+# Root gitignore
+node_modules/
+.DS_Store
+*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Backend
+backend/node_modules/
+backend/.env
+backend/*.log
+
+# Project specific
+.agents/
+knowledge/
+brain/
+artifacts/
+scratch/
