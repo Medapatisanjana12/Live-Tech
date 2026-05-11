@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "python311", "gcc"]
+
+[phases.install]
+cmds = [
+    "npm install --prefix backend",
+    "pip install --prefix=/usr/local -r requirements.txt"
+]
+
+[start]
+cmd = "cd backend && npm start"
