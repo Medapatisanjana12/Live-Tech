@@ -52,7 +52,7 @@ app.get('/api/tools', async (req, res) => {
 
 // POST /api/scrape — Trigger background scraping pipeline manually
 app.post('/api/scrape', (req, res) => {
-  const pyCommand = `python -c "import sys, os; sys.path.insert(0, os.path.abspath('../ai-bulletin')); from pipeline import run_fetch_and_save; from producer import run_producer; tools = run_fetch_and_save(); run_producer(tools) if tools else None"`;
+  const pyCommand = `${process.platform === 'win32' ? 'python' : 'python3'} -c "import sys, os; sys.path.insert(0, os.path.abspath('../ai-bulletin')); from pipeline import run_fetch_and_save; from producer import run_producer; tools = run_fetch_and_save(); run_producer(tools) if tools else None"`;
   
   exec(pyCommand, { cwd: __dirname }, (error, stdout, stderr) => {
     if (error) {
@@ -71,7 +71,13 @@ app.listen(PORT, () => {
   
   // Start the background Python scheduler
   console.log('🤖 Starting background Python scheduler...');
-  const pythonProcess = spawn('python', ['scheduler_realtime.py'], { cwd: __dirname });
+  const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
+  const pythonProcess = spawn(pythonCmd, ['scheduler_realtime.py'], { cwd: __dirname });
+
+  pythonProcess.on('error', (err) => {
+    console.error(`[Scheduler Failed to Start] ${err.message}`);
+    console.error('If you are on Linux/Railway, make sure python3 is installed. If on Windows, make sure python is in PATH.');
+  });
 
   pythonProcess.stdout.on('data', (data) => {
     process.stdout.write(`[Scheduler] ${data}`);
