@@ -84,7 +84,7 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
     }
   }, [page]);
 
-  const fetchInitialTools = async () => {
+  const fetchInitialTools = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -102,9 +102,9 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchMoreTools = async () => {
+  const fetchMoreTools = useCallback(async () => {
     if (fetchingMore || !hasMore) return;
     
     try {
@@ -134,13 +134,14 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
     } finally {
       setFetchingMore(false);
     }
-  };
+  }, [fetchingMore, hasMore, page]);
 
   // Filtered tools based on search and category filter
   const processedTools = useMemo(() => {
+    const lowerSearch = searchTerm.toLowerCase();
     return tools.filter(tool => {
-      const matchesSearch = (tool.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (tool.tagline?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+      const matchesSearch = (tool.name?.toLowerCase() || '').includes(lowerSearch) ||
+        (tool.tagline?.toLowerCase() || '').includes(lowerSearch);
 
       const topics = Array.isArray(tool.topics) ? tool.topics : tool.topics?.split(',') || [];
       const matchesFilter = activeFilter === 'All' || topics.some(t => t.trim() === activeFilter);
@@ -212,7 +213,7 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-7xl font-black text-white tracking-tighter mb-6 leading-[0.9]"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter mb-6 leading-[0.9]"
           >
             Live <span className="text-gradient">Trending</span> <br/>AI Discovery
           </motion.h2>
@@ -284,8 +285,8 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
               </div>
 
               {loading ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {[1, 2, 3, 4, 5, 6].map(i => <LoaderCard key={i} />)}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <LoaderCard key={i} />)}
                 </div>
               ) : error ? (
                 <div className="glass-panel py-32 text-center border-red-500/10">
@@ -302,7 +303,7 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
                 </div>
               ) : processedTools.length > 0 ? (
                 <>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
                     <AnimatePresence mode="popLayout">
                       {processedTools.map((tool, index) => (
                         <motion.div
@@ -347,7 +348,7 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
       {/* Detail Modal */}
       <AnimatePresence>
         {selectedTool && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -391,8 +392,8 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
               </div>
 
               {/* Modal Content */}
-              <div className="p-8 overflow-y-auto custom-scrollbar">
-                <div className="grid md:grid-cols-3 gap-10">
+              <div className="p-4 sm:p-6 md:p-8 overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
                   <div className="md:col-span-2">
                     <h4 className="text-xs font-black text-gray-500 uppercase tracking-[0.3em] mb-6">Discovery Insight</h4>
                     <p className="text-gray-300 leading-relaxed text-xl font-medium whitespace-pre-wrap">

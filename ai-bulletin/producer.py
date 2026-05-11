@@ -39,14 +39,22 @@ def fetch_ai_tools():
     data = response.json()
     return data["data"]["posts"]["edges"]
 
-def run_producer():
-    producer = KafkaProducer(
-        bootstrap_servers="localhost:9092",
-        api_version=(0, 10),
-        value_serializer=lambda v: json.dumps(v).encode("utf-8")
-    )
+def run_producer(tools):
+    if not tools:
+        print("[Producer] No tools to publish.")
+        return
 
-    tools = fetch_ai_tools()
+    try:
+        producer = KafkaProducer(
+            bootstrap_servers="localhost:9092",
+            api_version=(0, 10),
+            max_block_ms=5000,
+            value_serializer=lambda v: json.dumps(v).encode("utf-8")
+        )
+    except Exception as e:
+        print(f"[Producer] Could not connect to Kafka (is it running?): {e}")
+        return
+
     today = str(date.today())
 
     for edge in tools:
@@ -62,8 +70,12 @@ def run_producer():
             "created_at": tool["createdAt"],
             "topics": [t["node"]["name"] for t in tool["topics"]["edges"]]
         }
-        producer.send("producthunt-ai-tools", value=message)
-        print(f"[Producer] Published: {tool['name']}")
+        try:
+            producer.send("producthunt-ai-tools", value=message)
+            print(f"[Producer] Published: {tool['name']}")
+        except Exception as e:
+            print(f"[Producer] Failed to publish {tool['name']} to Kafka: {e}")
+            break # Exit loop if broker is completely unavailable
 
     producer.flush()
     producer.close()

@@ -1,9 +1,19 @@
-from datetime import datetime, timezone
+import os
+from datetime import datetime, timezone, date
 import requests
-from datetime import date
+from dotenv import load_dotenv
 from supabase_client import supabase
 
-PRODUCTHUNT_TOKEN = "TilE3Hm1LUZjgNjMZP8tkaQozkkktzBsouWiUE7z0NM"  # from producthunt.com/v2/oauth/applications
+# Load environment variables from .env.local (fallback to .env)
+load_dotenv(dotenv_path=".env.local")
+load_dotenv()
+
+PRODUCTHUNT_TOKEN = os.getenv("PRODUCTHUNT_TOKEN")
+if not PRODUCTHUNT_TOKEN:
+    raise EnvironmentError(
+        "[pipeline] PRODUCTHUNT_TOKEN not found. "
+        "Please set it in .env.local or your environment."
+    )
 
 def calculate_trending_score(created_at_str, topics):
     """
@@ -28,39 +38,52 @@ def calculate_trending_score(created_at_str, topics):
         return 0
 
 def fetch_ai_tools():
-    # ... (rest of the function remains same)
-    query = """
+    query_votes = """
     {
-      posts(order: VOTES, topic: "artificial-intelligence") {
+      posts(first: 20, order: VOTES, topic: "artificial-intelligence") {
         edges {
           node {
-            id
-            name
-            tagline
-            description
-            votesCount
-            website
-            createdAt
-            topics {
-              edges { node { name } }
-            }
+            id name tagline description votesCount website createdAt
+            topics { edges { node { name } } }
           }
         }
       }
     }
     """
-    response = requests.post(
-        "https://api.producthunt.com/v2/api/graphql",
-        json={"query": query},
-        headers={"Authorization": f"Bearer {PRODUCTHUNT_TOKEN}"}
-    )
     
-    if response.status_code != 200:
-        print(f"[Error] Failed to fetch data: {response.status_code} - {response.text}")
-        return []
-        
-    data = response.json()
-    return data.get("data", {}).get("posts", {}).get("edges", [])
+    query_newest = """
+    {
+      posts(first: 20, order: NEWEST, topic: "artificial-intelligence") {
+        edges {
+          node {
+            id name tagline description votesCount website createdAt
+            topics { edges { node { name } } }
+          }
+        }
+      }
+    }
+    """
+    
+    headers = {"Authorization": f"Bearer {PRODUCTHUNT_TOKEN}"}
+    tools = []
+
+    # Fetch Top Voted
+    res_votes = requests.post("https://api.producthunt.com/v2/api/graphql", json={"query": query_votes}, headers=headers)
+    if res_votes.status_code == 200:
+        tools.extend(res_votes.json().get("data", {}).get("posts", {}).get("edges", []))
+    else:
+        print(f"[Error] Failed to fetch top voted: {res_votes.status_code} - {res_votes.text}")
+
+    # Fetch Newest
+    res_newest = requests.post("https://api.producthunt.com/v2/api/graphql", json={"query": query_newest}, headers=headers)
+    if res_newest.status_code == 200:
+        tools.extend(res_newest.json().get("data", {}).get("posts", {}).get("edges", []))
+    else:
+        print(f"[Error] Failed to fetch newest: {res_newest.status_code} - {res_newest.text}")
+
+    # Deduplicate tools by id
+    unique_tools = {tool["node"]["id"]: tool for tool in tools}
+    return list(unique_tools.values())
 
 def run_fetch_and_save():
     print("[Pipeline] Fetching AI tools from Product Hunt...")
@@ -69,7 +92,7 @@ def run_fetch_and_save():
 
     if not tools:
         print("[Pipeline] No tools found or failed to fetch.")
-        return
+        return []
 
     print(f"[Pipeline] Found {len(tools)} tools. Saving to Supabase...")
     
@@ -106,3 +129,4 @@ def run_fetch_and_save():
                 print(f"[Error] Failed to save (unprintable name): {e}")
 
     print("[Pipeline] All tools saved to Supabase successfully.")
+    return tools

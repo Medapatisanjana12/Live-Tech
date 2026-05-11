@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { ExternalLink, Calendar, Tag, ArrowUpRight, Bookmark, BookmarkCheck } from 'lucide-react';
+import React from 'react';
 
-export default function ToolCard({ tool, isSaved, onToggleSave, onClick }) {
+const ToolCard = React.memo(({ tool, isSaved, onToggleSave, onClick }) => {
   const topics = Array.isArray(tool.topics) 
     ? tool.topics 
     : typeof tool.topics === 'string' 
@@ -17,11 +18,10 @@ export default function ToolCard({ tool, isSaved, onToggleSave, onClick }) {
 
   return (
     <motion.div
-      layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -8 }}
-      className="glass-panel p-6 flex flex-col h-full group border border-white/5 hover:border-primary/30 transition-all duration-500 relative cursor-pointer"
+      className="glass-panel p-4 sm:p-6 flex flex-col h-full group border border-white/5 hover:border-primary/30 transition-all duration-500 relative cursor-pointer"
       onClick={onClick}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none" />
@@ -101,4 +101,6 @@ export default function ToolCard({ tool, isSaved, onToggleSave, onClick }) {
       </div>
     </motion.div>
   );
-}
+});
+
+export default ToolCard;
