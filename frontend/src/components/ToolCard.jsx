@@ -30,20 +30,20 @@ const ToolCard = React.memo(({ tool, isSaved, onToggleSave, onClick }) => {
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-primary transition-colors duration-300">
+              <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-primary transition-colors duration-300 line-clamp-1">
                 {tool.name}
               </h3>
               {tool.trending_score > 80 && (
                 <motion.span
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-[10px] font-black text-primary uppercase tracking-tighter flex items-center gap-1 shadow-[0_0_15px_var(--color-primary-glow)]"
+                  className="px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-[10px] font-black text-primary uppercase tracking-tighter flex items-center gap-1 shadow-[0_0_15px_var(--color-primary-glow)] shrink-0"
                 >
                   <span className="animate-pulse">🔥</span> Trending
                 </motion.span>
               )}
             </div>
-            <p className="text-sm font-semibold text-primary/80 uppercase tracking-wider">
+            <p className="text-sm font-semibold text-primary/80 uppercase tracking-wider line-clamp-1">
               {tool.tagline}
             </p>
           </div>
@@ -65,12 +65,12 @@ const ToolCard = React.memo(({ tool, isSaved, onToggleSave, onClick }) => {
           </div>
         </div>
 
-        <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3">
+        <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3 min-h-[4.5rem]">
           {tool.description}
         </p>
 
-        <div className="flex flex-wrap gap-2 mb-8">
-          {topics.map((topic, idx) => (
+        <div className="flex flex-wrap gap-2 mb-8 min-h-[2.5rem] content-start overflow-hidden">
+          {topics.slice(0, 5).map((topic, idx) => (
             <span
               key={idx}
               className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest bg-primary/10 text-primary border border-primary/20 shadow-[0_0_10px_rgba(0,229,255,0.1)]"

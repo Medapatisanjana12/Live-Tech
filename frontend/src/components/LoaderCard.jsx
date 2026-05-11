@@ -27,14 +27,14 @@ export default function LoaderCard() {
         </div>
 
         {/* Description Skeleton */}
-        <div className="space-y-2 pt-2">
+        <div className="space-y-2 pt-2 min-h-[4.5rem]">
           <div className="h-3 w-full bg-white/5 rounded animate-pulse" />
           <div className="h-3 w-full bg-white/5 rounded animate-pulse" />
           <div className="h-3 w-2/3 bg-white/5 rounded animate-pulse" />
         </div>
 
         {/* Tags Skeleton */}
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="flex flex-wrap gap-2 pt-2 min-h-[2.5rem]">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-5 w-16 bg-primary/10 rounded-md border border-primary/10 animate-pulse" />
           ))}
