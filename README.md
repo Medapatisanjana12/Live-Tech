@@ -2,6 +2,10 @@
 
 **LIVE TECH** is a futuristic, real-time intelligence dashboard designed to monitor, analyze, and discover the latest breakthroughs in Artificial Intelligence. By combining automated discovery engines with high-throughput streaming and a premium glassmorphic UI, LIVE TECH provides a window into the rapidly evolving AI ecosystem.
 
+
+https://live-tech13.onrender.com 
+
+
 ---
 
 ## ⚡ Core Intelligence Features
