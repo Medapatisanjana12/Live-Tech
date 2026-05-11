@@ -15,24 +15,27 @@ if not PRODUCTHUNT_TOKEN:
         "Please set it in .env.local or your environment."
     )
 
-def calculate_trending_score(created_at_str, topics):
+def calculate_trending_score(created_at_str, topics, votes):
     """
-    Calculates a trending score based on freshness and topic relevance.
-    Formula: freshness_score (max 100) + topic_bonus (5 per topic)
+    Calculates a trending score based on freshness, topic relevance, and community engagement.
+    Formula: freshness_score (max 100) + topic_bonus (5 per topic) + engagement_score (votes/5)
     """
     try:
         # Parse Product Hunt created_at (ISO format)
         created_at = datetime.fromisoformat(created_at_str.replace("Z", "+00:00"))
         now = datetime.now(timezone.utc)
         
-        # Calculate freshness (hours old)
+        # Calculate freshness (hours old) - decays over 4 days (96 hours)
         hours_old = (now - created_at).total_seconds() / 3600
-        freshness_score = max(0, 100 - hours_old)
+        freshness_score = max(0, 100 - (hours_old * 1.04)) 
         
         # Calculate topic bonus
-        topic_bonus = len(topics) * 5
+        topic_bonus = min(25, len(topics) * 5)
         
-        return round(freshness_score + topic_bonus, 2)
+        # Calculate engagement score (Votes weigh heavily)
+        engagement_score = min(150, (votes / 2)) 
+        
+        return round(freshness_score + topic_bonus + engagement_score, 2)
     except Exception as e:
         print(f"[Error] Failed to calculate score: {e}")
         return 0
@@ -99,9 +102,10 @@ def run_fetch_and_save():
     for edge in tools:
         tool = edge["node"]
         topics = [t["node"]["name"] for t in tool["topics"]["edges"]]
+        votes = tool.get("votesCount", 0)
         
         # Calculate trending score
-        score = calculate_trending_score(tool["createdAt"], topics)
+        score = calculate_trending_score(tool["createdAt"], topics, votes)
         
         data = {
             "id": int(tool["id"]),
@@ -109,7 +113,7 @@ def run_fetch_and_save():
             "name": tool["name"],
             "tagline": tool["tagline"],
             "description": tool["description"],
-            "votes": tool["votesCount"],
+            "votes": votes,
             "website": tool["website"],
             "created_at": tool["createdAt"],
             "topics": topics,

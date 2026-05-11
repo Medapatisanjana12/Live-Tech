@@ -6,7 +6,7 @@
   },
   "buildAptPackages": ["gcc"],
   "cmds": {
-    "install": "npm install --prefix backend && pip install -r requirements.txt",
+    "install": "npm install && npm install --prefix backend && npm install --prefix ai-bulletin && pip install -r requirements.txt",
     "build": ""
   },
   "deploy": {

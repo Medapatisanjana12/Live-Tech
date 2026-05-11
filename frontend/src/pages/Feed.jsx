@@ -364,21 +364,21 @@ export default function Feed({ session, searchTerm, setSearchTerm, savedToolIds,
               className="relative w-full max-w-3xl glass-panel bg-card border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Modal Header */}
-              <div className="p-8 border-b border-white/5 flex justify-between items-start bg-gradient-to-br from-primary/5 to-transparent">
-                <div className="flex gap-6">
-                  <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_30px_var(--color-primary-glow)] shrink-0">
-                    <Info className="h-10 w-10 text-darker" />
+              <div className="p-5 sm:p-8 border-b border-white/5 flex justify-between items-start bg-gradient-to-br from-primary/5 to-transparent">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                  <div className="h-14 w-14 sm:h-20 sm:w-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_30px_var(--color-primary-glow)] shrink-0">
+                    <Info className="h-7 w-7 sm:h-10 sm:w-10 text-darker" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-4xl font-black text-white tracking-tighter leading-none">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                      <h3 className="text-2xl sm:text-4xl font-black text-white tracking-tighter leading-none">
                         {selectedTool.name}
                       </h3>
                       {selectedTool.trending_score > 80 && (
-                        <span className="px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[10px] font-black text-primary uppercase tracking-widest">🔥 Trending</span>
+                        <span className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-primary/20 border border-primary/30 text-[8px] sm:text-[10px] font-black text-primary uppercase tracking-widest">🔥 Trending</span>
                       )}
                     </div>
-                    <p className="text-primary font-bold text-base uppercase tracking-[0.2em]">
+                    <p className="text-primary font-bold text-sm sm:text-base uppercase tracking-[0.2em]">
                       {selectedTool.tagline}
                     </p>
                   </div>

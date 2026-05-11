@@ -18,7 +18,7 @@ def run_consumer():
         tool = message.value
         
         # Calculate trending score
-        score = calculate_trending_score(tool["created_at"], tool["topics"])
+        score = calculate_trending_score(tool["created_at"], tool["topics"], tool.get("votes", 0))
 
         data = {
             "id": int(tool["id"]),

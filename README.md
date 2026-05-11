@@ -1,57 +1,88 @@
-# 🚀 LIVE TECH | Next-Gen AI Discovery Platform
+# 🚀 LIVE TECH | Next-Gen AI Intelligence Platform
 
-**LIVE TECH** is a futuristic, real-time intelligence dashboard for discovering the latest AI breakthroughs. It features a fully automated discovery engine, a Kafka-powered processing pipeline, and a premium React frontend with instant real-time updates.
-
----
-
-## ⚡ Key Features
-
-- **Real-time Discovery Feed**: AI tools appear instantly without page refreshes using Supabase Realtime.
-- **Infinite Scrolling**: High-performance pagination with skeleton loading and smooth transitions.
-- **Discovery Engine**: Python-based scraper that monitors Product Hunt and other sources.
-- **Processing Pipeline**: Distributed data flow using Apache Kafka (Producer/Consumer).
-- **Premium UI/UX**: Dark-themed cyberpunk aesthetic with Framer Motion animations and glassmorphism.
-- **User Intelligence**: Personalized profiles, bookmarking system, and topic filtering.
+**LIVE TECH** is a futuristic, real-time intelligence dashboard designed to monitor, analyze, and discover the latest breakthroughs in Artificial Intelligence. By combining automated discovery engines with high-throughput streaming and a premium glassmorphic UI, LIVE TECH provides a window into the rapidly evolving AI ecosystem.
 
 ---
 
-## 🏗️ System Architecture
+## ⚡ Core Intelligence Features
+
+- **Real-time Discovery Engine**: Automated Python agents monitor global AI launchpads (like Product Hunt) and ingest new tools instantly.
+- **Dynamic Trending Algorithm**: Tools are analyzed and assigned a "Trending Score" based on community engagement, velocity, and relevance.
+- **Kafka-Powered Pipeline**: A robust, distributed data stream ensures that high volumes of AI updates are processed with zero latency.
+- **Instant Broadcast**: Built on Supabase Realtime, new intelligence appears in the dashboard without requiring a page refresh.
+- **Intelligent Filtering**: Deep categorization allows researchers to filter by specific AI sub-fields (NLP, Computer Vision, Generative AI, etc.).
+- **Cyberpunk UI/UX**: A premium dark-mode interface featuring Framer Motion animations, glassmorphism, and responsive layouts.
+
+---
+
+## 🏗️ Intelligence Architecture
+
+The platform follows a distributed microservices pattern to ensure scalability and reliability:
 
 ```mermaid
 graph TD
-    PH[Product Hunt API] --> |Scrape| PR[Kafka Producer]
-    PR --> |Stream| KB[Kafka Broker]
-    KB --> |Fetch| CS[Kafka Consumer]
-    CS --> |Upsert| SB[Supabase Database]
-    SB --> |Broadcast| RT[Supabase Realtime]
-    RT --> |Update| RF[React Feed UI]
+    subgraph "Discovery Layer"
+        PH[Product Hunt API] --> |Scrape & Analyze| PR[Kafka Producer]
+    end
+    
+    subgraph "Streaming Layer"
+        PR --> |Publish Event| KB[Apache Kafka Cluster]
+        KB --> |Subscribe| CS[Kafka Consumer]
+    end
+    
+    subgraph "Persistence Layer"
+        CS --> |Transform & Upsert| SB[(Supabase PostgreSQL)]
+        SB --> |CDC Broadcast| RT[Supabase Realtime]
+    end
+    
+    subgraph "Intelligence Dashboard"
+        RT --> |Sync State| RF[React Frontend]
+        RF --> |User Actions| SB
+    end
 ```
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React (Vite), Tailwind CSS, Framer Motion, Lucide Icons.
-- **Backend**: Node.js, Express (API), Python (Scraping & Discovery).
-- **Database & Auth**: Supabase (PostgreSQL, Auth, Realtime).
-- **Streaming**: Apache Kafka.
+- **Frontend**: React 19 (Vite), Tailwind CSS 4.0, Framer Motion, Lucide Icons.
+- **API Backend**: Node.js, Express, Supabase JS SDK.
+- **Discovery Engine**: Python 3.11, `kafka-python`, `requests`, `python-dotenv`.
+- **Infrastructure**: Apache Kafka (Streaming), Supabase (PostgreSQL, Auth, Realtime).
+- **Deployment**: Render / Railway (Nixpacks & Railpack support included).
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Deployment Guide (Render)
+
+This repository is optimized for deployment on **Render** or similar platforms.
+
+1.  **Web Service (Backend & Frontend)**:
+    *   Build Command: `npm install && npm install --prefix backend && npm install --prefix ai-bulletin`
+    *   Start Command: `npm start` (Runs the root script which triggers the backend)
+2.  **Environment Variables**:
+    *   `SUPABASE_URL`: Your Supabase Project URL.
+    *   `SUPABASE_SERVICE_ROLE_KEY`: Your private service role key.
+    *   `PRODUCTHUNT_TOKEN`: Your Product Hunt API Developer Token.
+    *   `PORT`: The port for the Express server (defaults to 5000).
+
+---
+
+## 🔐 Local Setup
 
 ### 1. Prerequisites
 - Node.js (v18+)
 - Python (3.9+)
-- Apache Kafka (Running locally or on cloud)
+- Apache Kafka (Local or Cloud instance)
 - Supabase Account
 
 ### 2. Installation
 
-#### Clone the Repository
+#### Clone & Install Root Dependencies
 ```bash
 git clone https://github.com/Medapatisanjana12/Live-Tech.git
 cd Live-Tech
+npm install
 ```
 
 #### Frontend Setup
@@ -59,41 +90,27 @@ cd Live-Tech
 cd frontend
 npm install
 cp .env.example .env
-# Fill in your Supabase URL and Anon Key
+# Add your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
 npm run dev
 ```
 
-#### Backend Setup
+#### Backend & Discovery Setup
 ```bash
 cd ../backend
 npm install
+# Add .env with SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
 node server.js
 ```
 
-#### Discovery Engine (ai-bulletin) Setup
+#### Discovery Engine (ai-bulletin)
 ```bash
 cd ../ai-bulletin
-pip install -r requirements.txt # Or install: kafka-python, requests, python-dotenv, supabase
-# Ensure .env.local contains your SUPABASE_SERVICE_ROLE_KEY and PRODUCTHUNT_TOKEN
+pip install -r requirements.txt
+# Ensure .env.local contains your PRODUCTHUNT_TOKEN
 python scheduler.py
 ```
-
-### 🔐 Environment Variables
-
-| Variable | Source | Description |
-| :--- | :--- | :--- |
-| `VITE_SUPABASE_URL` | Supabase Dashboard | Your project URL |
-| `VITE_SUPABASE_ANON_KEY` | Supabase Dashboard | Public Anon Key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase Dashboard | Private Service Key (Keep Secret!) |
-| `PRODUCTHUNT_TOKEN` | Product Hunt API | Developer API Token |
-
----
-
-## 🟢 Enabling Real-time
-To make the feed update instantly, you **must** enable replication for the `ai_tools` table in your Supabase Dashboard:
-`Database -> Replication -> Enable ai_tools`
 
 ---
 
 ## 📄 License
-MIT License - Developed by **Medapatisanjana12**
+Developed by **Medapatisanjana12** | MIT License
