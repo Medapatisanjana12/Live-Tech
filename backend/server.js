@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -68,4 +68,20 @@ app.post('/api/scrape', (req, res) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
+  
+  // Start the background Python scheduler
+  console.log('🤖 Starting background Python scheduler...');
+  const pythonProcess = spawn('python', ['scheduler_realtime.py'], { cwd: __dirname });
+
+  pythonProcess.stdout.on('data', (data) => {
+    process.stdout.write(`[Scheduler] ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    process.stderr.write(`[Scheduler Error] ${data}`);
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`[Scheduler] Process exited with code ${code}`);
+  });
 });
